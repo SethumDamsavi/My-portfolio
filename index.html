@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sethum Senarathna — Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          clash: ['Clash Display', 'sans-serif'],
+          cabinet: ['Cabinet Grotesk', 'sans-serif'],
+          serif: ['Instrument Serif', 'serif'],
+        },
+        colors: {
+          bg: '#070709',
+          surface: '#0e0e12',
+          card: '#13131a',
+          border: 'rgba(255,255,255,0.07)',
+          lime: '#d4f244',
+          'lime-dim': 'rgba(212,242,68,0.1)',
+          muted: '#6b6b7a',
+          sub: '#9d9dab',
+        },
+        animation: {
+          'slide-up': 'slideUp 0.9s cubic-bezier(0.16,1,0.3,1) both',
+          'fade-in': 'fadeIn 1s ease both',
+          'spin-slow': 'spin 12s linear infinite',
+          'pulse-slow': 'pulse 4s ease-in-out infinite',
+          'marquee': 'marquee 22s linear infinite',
+        },
+        keyframes: {
+          slideUp: { from: { transform:'translateY(100%)', opacity:'0' }, to: { transform:'translateY(0)', opacity:'1' } },
+          fadeIn: { from: { opacity:'0', transform:'translateY(14px)' }, to: { opacity:'1', transform:'none' } },
+          marquee: { '0%': { transform:'translateX(0)' }, '100%': { transform:'translateX(-50%)' } },
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  body { background: #070709; color: #f0ede8; font-family: 'Cabinet Grotesk', sans-serif; overflow-x: hidden; cursor: none; }
+  
+  /* Cursor */
+  #cur { position:fixed; width:10px; height:10px; background:#d4f244; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; }
+  #cur-ring { position:fixed; width:38px; height:38px; border:1.5px solid rgba(212,242,68,0.35); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .3s,height .3s,border-color .3s; }
+  body:has(a:hover) #cur-ring, body:has(button:hover) #cur-ring { width:58px; height:58px; border-color:#d4f244; }
+  body:has(a:hover) #cur { background:#070709; border:1.5px solid #d4f244; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:3px; } ::-webkit-scrollbar-track { background:#070709; } ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+
+  /* Fonts */
+  h1,h2,h3,.font-clash { font-family:'Clash Display',sans-serif; }
+
+  /* Noise */
+  .noise::after { content:''; position:fixed; inset:0; opacity:.025; pointer-events:none; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); z-index:0; }
+
+  /* Glow blob */
+  .glow { position:absolute; border-radius:50%; filter:blur(90px); pointer-events:none; }
+
+  /* Reveal */
+  .reveal { opacity:0; transform:translateY(32px); transition:opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
+  .reveal.d1 { transition-delay:.1s; } .reveal.d2 { transition-delay:.2s; } .reveal.d3 { transition-delay:.3s; } .reveal.d4 { transition-delay:.4s; }
+  .reveal.in { opacity:1; transform:none; }
+
+  /* Nav underline */
+  .nav-a { position:relative; font-size:.78rem; letter-spacing:.09em; text-transform:uppercase; color:#6b6b7a; text-decoration:none; transition:color .2s; }
+  .nav-a::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:1px; background:#d4f244; transition:width .3s; }
+  .nav-a:hover, .nav-a.active { color:#d4f244; } .nav-a:hover::after, .nav-a.active::after { width:100%; }
+
+  /* Skill bar */
+  .skill-bar-fill { height:100%; background:linear-gradient(90deg,#d4f244,#a8c830); border-radius:4px; width:0; transition:width 1.3s cubic-bezier(.16,1,.3,1); }
+
+  /* Project hover */
+  .proj-card { transition:transform .35s cubic-bezier(.16,1,.3,1), border-color .3s; }
+  .proj-card:hover { transform:translateY(-6px); border-color:rgba(212,242,68,0.25); }
+  .proj-card .proj-overlay { opacity:0; transition:opacity .3s; }
+  .proj-card:hover .proj-overlay { opacity:1; }
+
+  /* Tag pill */
+  .pill { display:inline-block; padding:.25rem .8rem; border-radius:2px; font-size:.72rem; background:rgba(212,242,68,0.08); color:#d4f244; border:1px solid rgba(212,242,68,0.15); }
+
+  /* Card border glow on hover */
+  .card-hover { transition:border-color .3s, background .3s; }
+  .card-hover:hover { border-color:rgba(212,242,68,0.2); background:#16161f; }
+
+  /* Typing cursor */
+  .type-cursor::after { content:'|'; animation:blink .8s step-end infinite; color:#d4f244; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* Timeline line */
+  .timeline-line { position:absolute; left:11px; top:28px; bottom:0; width:1px; background:linear-gradient(to bottom,rgba(212,242,68,0.3),transparent); }
+
+  /* Mobile */
+  @media (max-width:768px) {
+    body { cursor:auto; }
+    #cur,#cur-ring { display:none; }
+  }
+</style>
+</head>
+<body class="noise">
+
+<!-- Cursor -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- ════ NAV ════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-5 backdrop-blur-xl" style="background:rgba(7,7,9,0.82);border-bottom:1px solid rgba(255,255,255,0.06);">
+  <a href="#home" class="font-clash font-bold text-white text-lg tracking-tight"><span></span></a>
+  <ul class="hidden md:flex gap-8 list-none">
+    <li><a href="#about" class="nav-a">About</a></li>
+    <li><a href="#skills" class="nav-a">Skills</a></li>
+    <li><a href="#experience" class="nav-a">Experience</a></li>
+    <li><a href="#projects" class="nav-a">Projects</a></li>
+    <li><a href="#education" class="nav-a">Education</a></li>
+    <li><a href="#contact" class="nav-a">Contact</a></li>
+  </ul>
+  <a href="mailto:sethumdamsavi1@gmail.com" class="hidden md:flex items-center gap-2 text-xs tracking-widest uppercase border border-white/10 px-5 py-2.5 rounded-sm hover:border-lime/40 hover:text-lime transition-all duration-300" style="color:#d4f244;">Hire Me →</a>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section id="home" class="relative min-h-screen flex flex-col justify-center px-8 md:px-16 pt-24 pb-16 overflow-hidden">
+  <!-- bg glows -->
+  <div class="glow w-96 h-96 -top-20 -left-20 opacity-10" style="background:#d4f244;"></div>
+  <div class="glow w-72 h-72 bottom-0 right-0 opacity-5" style="background:#60a8f0;"></div>
+
+  <!-- bg number -->
+  <div class="absolute right-0 top-1/2 -translate-y-1/2 font-clash font-bold select-none pointer-events-none leading-none" style="font-size:30vw;color:rgba(255,255,255,0.015);letter-spacing:-.05em;"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-3 mb-6 animate-fade-in">
+      <span class="w-6 h-px" style="background:#d4f244;"></span>
+      <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Available for work</span>
+      <span class="w-2 h-2 rounded-full animate-pulse-slow" style="background:#d4f244;"></span>
+    </div>
+
+    <div class="overflow-hidden mb-2">
+      <h1 class="font-clash font-bold leading-none" style="font-size:clamp(3rem,9vw,8.5rem);letter-spacing:-.02em;animation:slideUp .9s cubic-bezier(.16,1,.3,1) both;">Sethum</h1>
+    </div>
+    <div class="overflow-hidden mb-6">
+      <h1 class="font-clash font-bold leading-none" style="font-size:clamp(3rem,9vw,8.5rem);letter-spacing:-.02em;color:#d4f244;animation:slideUp .9s .12s cubic-bezier(.16,1,.3,1) both;">Senarathna<span style="color:#fff">.</span></h1>
+    </div>
+
+    <p class="max-w-xl text-base md:text-lg mb-10 leading-relaxed animate-fade-in" style="color:#9d9dab;animation-delay:.4s;">
+      Software Engineering Graduate · Front-End Developer · Digital Marketer<br>
+      Currently pursuing <span style="color:#f0ede8">MSc MIS</span> at Edith Cowan University, Perth.
+    </p>
+
+    <div class="flex flex-wrap gap-4 animate-fade-in" style="animation-delay:.55s;">
+      <a href="#projects" class="flex items-center gap-2 px-7 py-3.5 font-medium text-sm rounded-sm transition-all duration-300 hover:-translate-y-1" style="background:#d4f244;color:#070709;">View My Work ↓</a>
+      <a href="#contact" class="flex items-center gap-2 px-7 py-3.5 font-medium text-sm rounded-sm border transition-all duration-300 hover:-translate-y-1 hover:border-lime/40 hover:text-lime" style="border-color:rgba(255,255,255,0.15);color:#9d9dab;">Let's Talk →</a>
+      <a href="assets/CV.pdf" download="Sethum_Senarathna_CV.pdf" class="flex items-center gap-2 px-7 py-3.5 font-medium text-sm rounded-sm border transition-all duration-300 hover:-translate-y-1 group" style="border-color:rgba(212,242,68,0.3);color:#d4f244;background:rgba(212,242,68,0.06);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300 group-hover:translate-y-0.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CV
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats bottom -->
+  <div class="absolute bottom-10 right-8 md:right-16 flex gap-10 animate-fade-in" style="animation-delay:.75s;">
+    <div class="text-right">
+      <div class="font-clash font-bold text-4xl leading-none" style="color:#f0ede8;">11<span style="color:#d4f244">+</span></div>
+      <div class="text-xs uppercase tracking-widest mt-1" style="color:#6b6b7a;">Projects</div>
+    </div>
+    <div class="text-right">
+      <div class="font-clash font-bold text-4xl leading-none" style="color:#f0ede8;">3<span style="color:#d4f244">+</span></div>
+      <div class="text-xs uppercase tracking-widest mt-1" style="color:#6b6b7a;">Roles</div>
+    </div>
+  </div>
+
+  <!-- scroll hint -->
+  <div class="absolute bottom-10 left-8 md:left-16 flex items-center gap-3 animate-fade-in" style="animation-delay:1.1s;">
+    <div class="w-10 h-px relative overflow-hidden" style="background:rgba(255,255,255,0.1);">
+      <div class="absolute left-0 top-0 h-full w-full" style="background:#d4f244;animation:scrollLine 2s 1.5s infinite;">
+        <style>@keyframes scrollLine{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}</style>
+      </div>
+    </div>
+    <span class="text-xs uppercase tracking-widest" style="color:#6b6b7a;">Scroll</span>
+  </div>
+</section>
+
+<!-- ════ MARQUEE ════ -->
+<div class="py-5 border-y overflow-hidden" style="border-color:rgba(255,255,255,0.06);background:#0e0e12;">
+  <div class="flex whitespace-nowrap animate-marquee" style="width:max-content;">
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">React</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Node.js</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Tailwind CSS</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Laravel</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">MySQL</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Python</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Angular</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">PostgreSQL</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">MongoDB</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Digital Marketing</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <!-- repeat for seamless -->
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">React</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Node.js</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Tailwind CSS</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Laravel</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">MySQL</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Python</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Angular</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">PostgreSQL</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">MongoDB</span><span class="mx-2" style="color:#d4f244;">✦</span>
+    <span class="mx-8 text-xs uppercase tracking-widest" style="color:#6b6b7a;">Digital Marketing</span><span class="mx-2" style="color:#d4f244;">✦</span>
+  </div>
+</div>
+
+<!-- ════ ABOUT ════ -->
+<section id="about" class="py-28 px-8 md:px-16 max-w-7xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-16 md:gap-24 items-center">
+    <!-- Photo placeholder -->
+    <div class="reveal relative">
+      <div class="relative aspect-[4/5] rounded-sm overflow-hidden border" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-4" style="color:#6b6b7a;">
+           <img src="assets/images/image.png" alt="Sethum Senarathna"
+            style="width:90%;height:90%;object-fit:cover;object-position:top;">
+        </div>
+        <!-- grid overlay -->
+        <div class="absolute inset-0 opacity-30" style="background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:32px 32px;"></div>
+      </div>
+      <!-- accent offset border -->
+      <div class="absolute -bottom-4 -right-4 w-full h-full rounded-sm pointer-events-none" style="border:1px solid rgba(212,242,68,0.12);z-index:-1;"></div>
+    </div>
+
+    <div>
+      <div class="flex items-center gap-2 mb-4 reveal">
+        <span class="w-5 h-px" style="background:#d4f244;"></span>
+        <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">About Me</span>
+      </div>
+      <h2 class="font-clash font-bold mb-6 leading-tight reveal d1" style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;">
+        Building digital<br>experiences that<span style="color:#d4f244"> matter.</span>
+      </h2>
+      <p class="text-base leading-relaxed mb-4 reveal d2" style="color:#9d9dab;">
+        I'm <strong style="color:#f0ede8">Sethum Senarathna</strong> — a Software Engineering graduate currently pursuing my <strong style="color:#f0ede8">Master of Management Information Systems</strong> at Edith Cowan University, Perth, Australia.
+      </p>
+      <p class="text-base leading-relaxed mb-6 reveal d2" style="color:#9d9dab;">
+        I specialize in building responsive, user-friendly web applications and digital strategies. From crafting clean front-end interfaces in React to running high-ROI Meta ad campaigns — I love working where tech meets creativity.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-8 reveal d3">
+        <span class="pill">Front-End Dev</span>
+        <span class="pill">Digital Marketing</span>
+        <span class="pill">System Management</span>
+        <span class="pill">UI/UX</span>
+        <span class="pill">Problem Solver</span>
+      </div>
+      <div class="flex flex-wrap gap-4 reveal d3">
+        <a href="tel:+94778890805" class="flex items-center gap-2 text-sm transition-colors hover:text-lime" style="color:#9d9dab;">📞 +94 77 889 0805</a>
+        <span style="color:#6b6b7a;">·</span>
+        <a href="mailto:sethumdamsavi1@gmail.com" class="flex items-center gap-2 text-sm transition-colors hover:text-lime" style="color:#9d9dab;">📧 sethumdamsavi1@gmail.com</a>
+      </div>
+     
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SKILLS ════ -->
+<section id="skills" class="py-28 px-8 md:px-16" style="background:#0e0e12;">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-2 mb-4 reveal">
+      <span class="w-5 h-px" style="background:#d4f244;"></span>
+      <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Skills</span>
+    </div>
+    <h2 class="font-clash font-bold mb-14 leading-tight reveal d1" style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;">
+      Technologies I use.
+    </h2>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Skill card macro -->
+      <div class="p-6 rounded-sm border card-hover reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="text-2xl mb-3">⚡</div>
+        <div class="font-clash font-semibold text-base mb-1">Front-End</div>
+        <div class="text-xs mb-4" style="color:#6b6b7a;">React · Angular · HTML · CSS · Tailwind · Bootstrap</div>
+        <div class="space-y-2">
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>React / Angular</span><span>85%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="85"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>HTML / CSS / Tailwind</span><span>92%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="92"></div></div></div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-sm border card-hover reveal d1" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="text-2xl mb-3">🔧</div>
+        <div class="font-clash font-semibold text-base mb-1">Back-End</div>
+        <div class="text-xs mb-4" style="color:#6b6b7a;">Node.js · Laravel · PHP · Python · Java · .Net</div>
+        <div class="space-y-2">
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>Node.js / Laravel</span><span>78%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="78"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>PHP / Python</span><span>75%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="75"></div></div></div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-sm border card-hover reveal d2" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="text-2xl mb-3">🗄️</div>
+        <div class="font-clash font-semibold text-base mb-1">Databases</div>
+        <div class="text-xs mb-4" style="color:#6b6b7a;">MySQL · PostgreSQL · MongoDB · SSMS</div>
+        <div class="space-y-2">
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>MySQL / PostgreSQL</span><span>82%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="82"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>MongoDB</span><span>70%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="70"></div></div></div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-sm border card-hover reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="text-2xl mb-3">📱</div>
+        <div class="font-clash font-semibold text-base mb-1">Digital Marketing</div>
+        <div class="text-xs mb-4" style="color:#6b6b7a;">Meta Ads · Facebook · Instagram · Canva · Analytics</div>
+        <div class="space-y-2">
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>Meta Ads / Strategy</span><span>80%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="80"></div></div></div>
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>Canva / Creatives</span><span>88%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="88"></div></div></div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-sm border card-hover reveal d1" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="text-2xl mb-3">🛠️</div>
+        <div class="font-clash font-semibold text-base mb-1">DevTools</div>
+        <div class="text-xs mb-4" style="color:#6b6b7a;">Git · GitHub · VS Code · Postman · Figma</div>
+        <div class="space-y-2">
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>Git / GitHub</span><span>85%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="85"></div></div></div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-sm border card-hover reveal d2" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="text-2xl mb-3">🔍</div>
+        <div class="font-clash font-semibold text-base mb-1">Soft Skills</div>
+        <div class="text-xs mb-4" style="color:#6b6b7a;">Problem-Solving · Networking · Troubleshooting · Reporting</div>
+        <div class="space-y-2">
+          <div><div class="flex justify-between text-xs mb-1" style="color:#6b6b7a;"><span>Communication</span><span>90%</span></div><div class="h-0.5 rounded-full" style="background:rgba(255,255,255,0.08);"><div class="skill-bar-fill h-0.5 rounded-full" data-w="90"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════ EXPERIENCE ════ -->
+<section id="experience" class="py-28 px-8 md:px-16 max-w-7xl mx-auto">
+  <div class="flex items-center gap-2 mb-4 reveal">
+    <span class="w-5 h-px" style="background:#d4f244;"></span>
+    <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Experience</span>
+  </div>
+  <h2 class="font-clash font-bold mb-14 leading-tight reveal d1" style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;">Where I've worked.</h2>
+
+  <div class="space-y-0 border-t" style="border-color:rgba(255,255,255,0.06);">
+
+    <!-- Exp item -->
+    <div class="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16 py-10 border-b reveal" style="border-color:rgba(255,255,255,0.06);">
+      <div>
+        <div class="text-xs uppercase tracking-widest mb-1" style="color:#6b6b7a;">Dec 2025 — Jun 2026</div>
+        <div class="text-xs" style="color:#d4f244;">Aruna Traders</div>
+      </div>
+      <div>
+        <div class="font-clash font-bold text-xl mb-1 leading-tight">Management Assistance</div>
+        <div class="text-sm mb-3" style="color:#6b6b7a;">IT Systems · Infrastructure Support</div>
+        <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Assisted the System Manager in monitoring and maintaining IT systems and infrastructure. Supported daily server/network operations, managed user access and security controls, and coordinated with IT vendors for issue resolution.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">IT Systems</span><span class="pill">Server Management</span><span class="pill">Security Controls</span><span class="pill">Documentation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16 py-10 border-b reveal" style="border-color:rgba(255,255,255,0.06);">
+      <div>
+        <div class="text-xs uppercase tracking-widest mb-1" style="color:#6b6b7a;">Nov 2025 — Present</div>
+        <div class="text-xs" style="color:#d4f244;">Freelance</div>
+      </div>
+      <div>
+        <div class="font-clash font-bold text-xl mb-1 leading-tight">Digital Marketing Freelancer</div>
+        <div class="text-sm mb-3" style="color:#6b6b7a;">Meta Ads · Social Media · Strategy</div>
+        <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Planned and executed digital marketing strategies for small businesses and personal brands. Managed Facebook & Instagram pages, created Meta ad campaigns for lead generation and brand awareness, and analyzed campaign performance to iterate results.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">Meta Ads</span><span class="pill">Facebook / Instagram</span><span class="pill">Canva</span><span class="pill">Campaign Analytics</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16 py-10 border-b reveal" style="border-color:rgba(255,255,255,0.06);">
+      <div>
+        <div class="text-xs uppercase tracking-widest mb-1" style="color:#6b6b7a;">Apr 2025 — Oct 2025</div>
+        <div class="text-xs" style="color:#d4f244;">Ceylon X Corporation (Pvt) Ltd</div>
+      </div>
+      <div>
+        <div class="font-clash font-bold text-xl mb-1 leading-tight">Intern Front-End Developer</div>
+        <div class="text-sm mb-3" style="color:#6b6b7a;">React · JavaScript · CSS · Bootstrap</div>
+        <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Built responsive and user-friendly web interfaces using React, CSS, and JavaScript. Implemented UI components from design mockups, collaborated with designers and back-end devs, ensured cross-browser compatibility, and followed Git-based version control workflows.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="pill">React</span><span class="pill">JavaScript</span><span class="pill">CSS</span><span class="pill">Bootstrap</span><span class="pill">Angular</span><span class="pill">Git</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════ PROJECTS ════ -->
+<section id="projects" class="py-28 px-8 md:px-16" style="background:#0e0e12;">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-2 mb-4 reveal">
+      <span class="w-5 h-px" style="background:#d4f244;"></span>
+      <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Projects</span>
+    </div>
+    <h2 class="font-clash font-bold mb-14 leading-tight reveal d1" style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;">Things I've built.</h2>
+
+    <div class="grid md:grid-cols-2 gap-5">
+
+      <!-- Featured large card -->
+      <div class="md:col-span-2 proj-card rounded-sm border overflow-hidden reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="relative h-52 flex items-center justify-center overflow-hidden" style="background:#16161f;">
+          <div class="absolute inset-0" style="background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.04) 1px,transparent 0);background-size:28px 28px;"></div>
+          <div class="absolute w-40 h-40 rounded-full" style="background:rgba(212,242,68,0.08);filter:blur(50px);"></div>
+          <span class="relative text-5xl">🌐</span>
+          <div class="proj-overlay absolute inset-0 flex items-center justify-center" style="background:rgba(212,242,68,0.05);">
+            <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Featured Project</span>
+          </div>
+          <span class="absolute top-4 left-5 text-xs tracking-widest uppercase" style="color:#6b6b7a;">01</span>
+        </div>
+        <div class="p-7">
+          <div class="font-clash font-bold text-xl mb-2">Review.lk — Company Review Platform</div>
+          <p class="text-sm leading-relaxed mb-5" style="color:#9d9dab;">Designed a Web and Mobile application allowing users to review all companies across Sri Lanka. Full review system with search, filtering, ratings, and responsive UI across all devices.</p>
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex flex-wrap gap-2">
+              <span class="pill">React</span><span class="pill">Node.js</span><span class="pill">MongoDB</span><span class="pill">Mobile Responsive</span>
+            </div>
+            <span class="text-xs" style="color:#6b6b7a;">Aug – Oct 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card rounded-sm border overflow-hidden reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="relative h-36 flex items-center justify-center" style="background:#16161f;">
+          <div class="absolute inset-0 opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.04) 1px,transparent 0);background-size:24px 24px;"></div>
+          <div class="absolute w-28 h-28 rounded-full" style="background:rgba(96,168,240,0.08);filter:blur(40px);"></div>
+          <span class="relative text-4xl">💎</span>
+          <span class="absolute top-4 left-5 text-xs tracking-widest uppercase" style="color:#6b6b7a;">02</span>
+        </div>
+        <div class="p-6">
+          <div class="font-clash font-bold text-lg mb-2">Halo & Bliss — E-Commerce</div>
+          <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Responsive e-commerce website for a Dubai-based jewellery brand with product catalogue, cart, and checkout flow.</p>
+          <div class="flex flex-wrap gap-2"><span class="pill">React</span><span class="pill">Tailwind CSS</span><span class="pill">MySQL</span></div>
+          <div class="mt-3 text-xs" style="color:#6b6b7a;">Jul – Aug 2025</div>
+        </div>
+      </div>
+
+      <div class="proj-card rounded-sm border overflow-hidden reveal d1" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="relative h-36 flex items-center justify-center" style="background:#16161f;">
+          <div class="absolute inset-0 opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.04) 1px,transparent 0);background-size:24px 24px;"></div>
+          <div class="absolute w-28 h-28 rounded-full" style="background:rgba(212,242,68,0.07);filter:blur(40px);"></div>
+          <span class="relative text-4xl">🏠</span>
+          <span class="absolute top-4 left-5 text-xs tracking-widest uppercase" style="color:#6b6b7a;">03</span>
+        </div>
+        <div class="p-6">
+          <div class="font-clash font-bold text-lg mb-2">JohnnySuppa.com — Coaching Platform</div>
+          <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Web-based system for a Mortgage Professionals coaching platform with booking, content management, and member portal.</p>
+          <div class="flex flex-wrap gap-2"><span class="pill">Laravel</span><span class="pill">MySQL</span><span class="pill">Bootstrap</span></div>
+          <div class="mt-3 text-xs" style="color:#6b6b7a;">Jun 2024 – Jun 2025</div>
+        </div>
+      </div>
+
+      <div class="proj-card rounded-sm border overflow-hidden reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="relative h-36 flex items-center justify-center" style="background:#16161f;">
+          <div class="absolute inset-0 opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.04) 1px,transparent 0);background-size:24px 24px;"></div>
+          <span class="relative text-4xl">🎓</span>
+          <span class="absolute top-4 left-5 text-xs tracking-widest uppercase" style="color:#6b6b7a;">04</span>
+        </div>
+        <div class="p-6">
+          <div class="font-clash font-bold text-lg mb-2">Learning Management System</div>
+          <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Full LMS with course management, student progress tracking, quiz system, and instructor dashboard.</p>
+          <div class="flex flex-wrap gap-2"><span class="pill">PHP</span><span class="pill">MySQL</span><span class="pill">JavaScript</span></div>
+          <div class="mt-3 text-xs" style="color:#6b6b7a;">Mar 2024 – Jan 2025</div>
+        </div>
+      </div>
+
+      <div class="proj-card rounded-sm border overflow-hidden reveal d1" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="relative h-36 flex items-center justify-center" style="background:#16161f;">
+          <div class="absolute inset-0 opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.04) 1px,transparent 0);background-size:24px 24px;"></div>
+          <span class="relative text-4xl">🚕</span>
+          <span class="absolute top-4 left-5 text-xs tracking-widest uppercase" style="color:#6b6b7a;">05</span>
+        </div>
+        <div class="p-6">
+          <div class="font-clash font-bold text-lg mb-2">City Taxi — Booking System</div>
+          <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Web-based taxi reservation system for City Taxi (PVT) Ltd with real-time booking, driver management, and admin panel.</p>
+          <div class="flex flex-wrap gap-2"><span class="pill">Laravel</span><span class="pill">MySQL</span><span class="pill">Bootstrap</span></div>
+          <div class="mt-3 text-xs" style="color:#6b6b7a;">Sep – Nov 2024</div>
+        </div>
+      </div>
+
+      <div class="proj-card rounded-sm border overflow-hidden reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+        <div class="relative h-36 flex items-center justify-center" style="background:#16161f;">
+          <div class="absolute inset-0 opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.04) 1px,transparent 0);background-size:24px 24px;"></div>
+          <span class="relative text-4xl">🤖</span>
+          <span class="absolute top-4 left-5 text-xs tracking-widest uppercase" style="color:#6b6b7a;">06</span>
+        </div>
+        <div class="p-6">
+          <div class="font-clash font-bold text-lg mb-2">Domain-Specific NLP Chatbot</div>
+          <p class="text-sm leading-relaxed mb-4" style="color:#9d9dab;">Designed and implemented a domain-specific Natural Language Conversational Assistant with intent recognition and response generation.</p>
+          <div class="flex flex-wrap gap-2"><span class="pill">Python</span><span class="pill">NLP</span><span class="pill">JavaScript</span></div>
+          <div class="mt-3 text-xs" style="color:#6b6b7a;">Mar – May 2024</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- More projects note -->
+    <div class="mt-8 text-center reveal">
+      <p class="text-sm" style="color:#6b6b7a;">+5 more projects including Library Management, Hospital Management, ABC Car Traders, Open University System & E-Book Platform.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ EDUCATION ════ -->
+<section id="education" class="py-28 px-8 md:px-16 max-w-7xl mx-auto">
+  <div class="flex items-center gap-2 mb-4 reveal">
+    <span class="w-5 h-px" style="background:#d4f244;"></span>
+    <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Education</span>
+  </div>
+  <h2 class="font-clash font-bold mb-14 leading-tight reveal d1" style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;">Academic journey.</h2>
+
+  <div class="relative pl-8">
+    <div class="timeline-line"></div>
+
+    <div class="space-y-10">
+
+      <div class="relative reveal">
+        <div class="absolute -left-8 top-1 w-5 h-5 rounded-full border-2 flex items-center justify-center" style="background:#070709;border-color:#d4f244;">
+          <div class="w-2 h-2 rounded-full" style="background:#d4f244;"></div>
+        </div>
+        <div class="p-6 rounded-sm border card-hover" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+          <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+            <div>
+              <div class="font-clash font-bold text-lg leading-tight">Master of Management Information Systems</div>
+              <div class="text-sm mt-0.5" style="color:#d4f244;">Edith Cowan University · Perth, Australia</div>
+            </div>
+            <span class="pill whitespace-nowrap">Jul 2026 – Present</span>
+          </div>
+          <p class="text-sm" style="color:#9d9dab;">Advancing expertise in information systems management, technology strategy, and enterprise computing at a globally recognized Australian university.</p>
+        </div>
+      </div>
+
+      <div class="relative reveal d1">
+        <div class="absolute -left-8 top-1 w-5 h-5 rounded-full border-2 flex items-center justify-center" style="background:#070709;border-color:rgba(212,242,68,0.4);">
+          <div class="w-2 h-2 rounded-full" style="background:rgba(212,242,68,0.4);"></div>
+        </div>
+        <div class="p-6 rounded-sm border card-hover" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+          <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+            <div>
+              <div class="font-clash font-bold text-lg leading-tight">BEng (Hons) in Software Engineering</div>
+              <div class="text-sm mt-0.5" style="color:#d4f244;">London Metropolitan University · UK / Esoft, Sri Lanka</div>
+            </div>
+            <span class="pill whitespace-nowrap">Feb 2024 – Feb 2025</span>
+          </div>
+          <p class="text-sm" style="color:#9d9dab;">Honours degree in Software Engineering covering advanced software design, development, systems architecture, and engineering principles.</p>
+        </div>
+      </div>
+
+      <div class="relative reveal d2">
+        <div class="absolute -left-8 top-1 w-5 h-5 rounded-full border-2 flex items-center justify-center" style="background:#070709;border-color:rgba(212,242,68,0.3);">
+          <div class="w-2 h-2 rounded-full" style="background:rgba(212,242,68,0.3);"></div>
+        </div>
+        <div class="p-6 rounded-sm border card-hover" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+          <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+            <div>
+              <div class="font-clash font-bold text-lg leading-tight">Level 5 Pearson BTEC HND in Computing</div>
+              <div class="text-sm mt-0.5" style="color:#d4f244;">Esoft Metro Campus · Colombo, Sri Lanka</div>
+            </div>
+            <span class="pill whitespace-nowrap">Feb 2022 – Feb 2024</span>
+          </div>
+          <p class="text-sm" style="color:#9d9dab;">Pearson (UK) qualification covering programming, systems analysis, database management, and software engineering fundamentals.</p>
+        </div>
+      </div>
+
+      <div class="relative reveal d3">
+        <div class="absolute -left-8 top-1 w-5 h-5 rounded-full border flex items-center justify-center" style="background:#070709;border-color:rgba(255,255,255,0.2);">
+          <div class="w-2 h-2 rounded-full" style="background:rgba(255,255,255,0.2);"></div>
+        </div>
+        <div class="p-6 rounded-sm border card-hover" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+          <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+            <div>
+              <div class="font-clash font-bold text-lg leading-tight">Diploma in Information & Communication Technology</div>
+              <div class="text-sm mt-0.5" style="color:#d4f244;">Esoft Metro Campus · Colombo, Sri Lanka</div>
+            </div>
+            <span class="pill whitespace-nowrap">Feb 2022 – Feb 2023</span>
+          </div>
+          <p class="text-sm" style="color:#9d9dab;">Foundation in ICT covering computer fundamentals, networking, and software applications.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact" class="py-28 px-8 md:px-16" style="background:#0e0e12;">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 md:gap-24">
+
+    <div>
+      <div class="flex items-center gap-2 mb-4 reveal">
+        <span class="w-5 h-px" style="background:#d4f244;"></span>
+        <span class="text-xs tracking-widest uppercase" style="color:#d4f244;">Contact</span>
+      </div>
+      <h2 class="font-clash font-bold mb-6 leading-tight reveal d1" style="font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;">
+        Got a project?<br><span style="color:#d4f244;">Let's talk.</span>
+      </h2>
+      <p class="text-sm leading-relaxed mb-10 reveal d2" style="color:#9d9dab;max-width:380px;">
+        Open to freelance projects, full-time opportunities, and exciting collaborations. I'm currently based in Perth, WA and available for remote work worldwide.
+      </p>
+      <div class="space-y-4">
+        <a href="mailto:sethumdamsavi1@gmail.com" class="flex items-center gap-4 p-5 rounded-sm border card-hover reveal" style="background:#13131a;border-color:rgba(255,255,255,0.07);text-decoration:none;color:inherit;">
+          <span class="text-xl">📧</span>
+          <div>
+            <div class="text-sm font-medium">Email</div>
+            <div class="text-xs mt-0.5" style="color:#d4f244;">sethumdamsavi1@gmail.com</div>
+          </div>
+          <span class="ml-auto text-xs" style="color:#6b6b7a;">→</span>
+        </a>
+        <a href="tel:+94778890805" class="flex items-center gap-4 p-5 rounded-sm border card-hover reveal d1" style="background:#13131a;border-color:rgba(255,255,255,0.07);text-decoration:none;color:inherit;">
+          <span class="text-xl">📞</span>
+          <div>
+            <div class="text-sm font-medium">Phone</div>
+            <div class="text-xs mt-0.5" style="color:#d4f244;">+94 77 889 0805</div>
+          </div>
+          <span class="ml-auto text-xs" style="color:#6b6b7a;">→</span>
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="flex items-center gap-4 p-5 rounded-sm border card-hover reveal d2" style="background:#13131a;border-color:rgba(255,255,255,0.07);text-decoration:none;color:inherit;">
+          <span class="text-xl">💼</span>
+          <div>
+            <div class="text-sm font-medium">LinkedIn</div>
+            <div class="text-xs mt-0.5" style="color:#d4f244;">linkedin.com/in/sethum</div>
+          </div>
+          <span class="ml-auto text-xs" style="color:#6b6b7a;">↗</span>
+        </a>
+        <div class="flex items-center gap-4 p-5 rounded-sm border reveal d3" style="background:#13131a;border-color:rgba(255,255,255,0.07);">
+          <span class="text-xl">📍</span>
+          <div>
+            <div class="text-sm font-medium">Location</div>
+            <div class="text-xs mt-0.5" style="color:#d4f244;">Gampaha, Sri Lanka</div>
+          </div>
+        </div>
+      
+      </div>
+    </div>
+
+    <div class="reveal d1">
+      <form id="contact-form" class="space-y-5">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs uppercase tracking-widest mb-2" style="color:#6b6b7a;">First Name</label>
+            <input type="text" placeholder="John" class="w-full px-4 py-3 text-sm rounded-sm outline-none transition-all duration-200" style="background:#13131a;border:1px solid rgba(255,255,255,0.07);color:#f0ede8;font-family:'Cabinet Grotesk',sans-serif;" onfocus="this.style.borderColor='rgba(212,242,68,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'">
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-widest mb-2" style="color:#6b6b7a;">Last Name</label>
+            <input type="text" placeholder="Doe" class="w-full px-4 py-3 text-sm rounded-sm outline-none transition-all duration-200" style="background:#13131a;border:1px solid rgba(255,255,255,0.07);color:#f0ede8;font-family:'Cabinet Grotesk',sans-serif;" onfocus="this.style.borderColor='rgba(212,242,68,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-widest mb-2" style="color:#6b6b7a;">Email</label>
+          <input type="email" placeholder="john@example.com" class="w-full px-4 py-3 text-sm rounded-sm outline-none transition-all duration-200" style="background:#13131a;border:1px solid rgba(255,255,255,0.07);color:#f0ede8;font-family:'Cabinet Grotesk',sans-serif;" onfocus="this.style.borderColor='rgba(212,242,68,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-widest mb-2" style="color:#6b6b7a;">Subject</label>
+          <input type="text" placeholder="Project enquiry..." class="w-full px-4 py-3 text-sm rounded-sm outline-none transition-all duration-200" style="background:#13131a;border:1px solid rgba(255,255,255,0.07);color:#f0ede8;font-family:'Cabinet Grotesk',sans-serif;" onfocus="this.style.borderColor='rgba(212,242,68,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-widest mb-2" style="color:#6b6b7a;">Message</label>
+          <textarea rows="5" placeholder="Tell me about your project..." class="w-full px-4 py-3 text-sm rounded-sm outline-none transition-all duration-200 resize-y" style="background:#13131a;border:1px solid rgba(255,255,255,0.07);color:#f0ede8;font-family:'Cabinet Grotesk',sans-serif;" onfocus="this.style.borderColor='rgba(212,242,68,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"></textarea>
+        </div>
+        <button id="submit-btn" type="submit" class="px-8 py-3.5 text-sm font-semibold rounded-sm transition-all duration-300 hover:-translate-y-1" style="background:#d4f244;color:#070709;font-family:'Cabinet Grotesk',sans-serif;">
+          Send Message →
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer class="border-t py-8 px-8 md:px-16" style="border-color:rgba(255,255,255,0.06);">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="font-clash font-bold text-lg"><span style="color:#d4f244;"></span></div>
+    <div class="text-xs" style="color:#6b6b7a;">© 2026 Sethum Senarathna. All rights reserved.</div>
+    <a href="#home" class="text-xs flex items-center gap-2 transition-colors hover:text-lime" style="color:#6b6b7a;">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+// ── Custom cursor ──
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+(function lerp(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(lerp);})();
+
+// ── Scroll reveal ──
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// ── Skill bars ──
+const barObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.skill-bar-fill').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('.p-6').forEach(el=>{ if(el.querySelector('.skill-bar-fill')) barObs.observe(el); });
+
+// ── Active nav ──
+const sections = document.querySelectorAll('section[id]');
+const navAs = document.querySelectorAll('.nav-a');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-220) current=s.id; });
+  navAs.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')==='#'+current); });
+},{ passive:true });
+
+// ── Typing effect ──
+(function(){
+  const roles = ['Front-End Developer.','Digital Marketer.','Software Engineer.','Problem Solver.'];
+  let ri=0, ci=0, del=false;
+  const el = document.getElementById('typed');
+  if(!el) return;
+  function tick(){
+    const word = roles[ri];
+    if(!del){ el.textContent=word.slice(0,++ci); if(ci===word.length){del=true;setTimeout(tick,1800);return;} }
+    else { el.textContent=word.slice(0,--ci); if(ci===0){del=false;ri=(ri+1)%roles.length;} }
+    setTimeout(tick,del?55:90);
+  }
+  tick();
+})();
+
+// ── Contact form ──
+document.getElementById('contact-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  btn.textContent='Sending...'; btn.disabled=true;
+  btn.style.background='rgba(212,242,68,0.4)';
+  setTimeout(()=>{
+    btn.textContent='Message Sent ✓';
+    btn.style.background='#3a8a2a';
+    btn.style.color='#d4f244';
+    setTimeout(()=>{
+      btn.textContent='Send Message →';
+      btn.style.background='#d4f244';
+      btn.style.color='#070709';
+      btn.disabled=false;
+      e.target.reset();
+    },3000);
+  },1200);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+/* ============================================
+   Sethum Senarathna — Portfolio Styles
+   File: assets/css/style.css
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom Cursor */
+#cur {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: #d4f244;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+
+#cur-ring {
+  position: fixed;
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid rgba(212, 242, 68, 0.35);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s;
+}
+
+body:has(a:hover) #cur-ring,
+body:has(button:hover) #cur-ring {
+  width: 58px;
+  height: 58px;
+  border-color: #d4f244;
+}
+
+body:has(a:hover) #cur {
+  background: #070709;
+  border: 1.5px solid #d4f244;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #070709; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+/* Noise overlay */
+.noise::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.025;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+/* Glow blob */
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+/* Scroll Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.d1 { transition-delay: 0.1s; }
+.reveal.d2 { transition-delay: 0.2s; }
+.reveal.d3 { transition-delay: 0.3s; }
+.reveal.d4 { transition-delay: 0.4s; }
+.reveal.in  { opacity: 1; transform: none; }
+
+/* Nav link underline */
+.nav-a {
+  position: relative;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #6b6b7a;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #d4f244;
+  transition: width 0.3s;
+}
+.nav-a:hover,
+.nav-a.active { color: #d4f244; }
+.nav-a:hover::after,
+.nav-a.active::after { width: 100%; }
+
+/* Skill bars */
+.skill-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4f244, #a8c830);
+  border-radius: 4px;
+  width: 0;
+  transition: width 1.3s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* Project cards */
+.proj-card {
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.3s;
+}
+.proj-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 242, 68, 0.25);
+}
+.proj-card .proj-overlay { opacity: 0; transition: opacity 0.3s; }
+.proj-card:hover .proj-overlay { opacity: 1; }
+
+/* Tag pill */
+.pill {
+  display: inline-block;
+  padding: 0.25rem 0.8rem;
+  border-radius: 2px;
+  font-size: 0.72rem;
+  background: rgba(212, 242, 68, 0.08);
+  color: #d4f244;
+  border: 1px solid rgba(212, 242, 68, 0.15);
+}
+
+/* Card hover */
+.card-hover {
+  transition: border-color 0.3s, background 0.3s;
+}
+.card-hover:hover {
+  border-color: rgba(212, 242, 68, 0.2);
+  background: #16161f;
+}
+
+/* Timeline line */
+.timeline-line {
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(212,242,68,0.3), transparent);
+}
+
+/* Scroll line animation */
+@keyframes scrollLine {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 22s linear infinite;
+}
+
+/* Slide up keyframes */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Pulse */
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cur, #cur-ring { display: none; }
+}
